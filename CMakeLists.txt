@@ -24,3 +24,5 @@ if(CLANG_FORMAT_BIN_NAME)
             ${ALL_SOURCE_FILES}
     )
 endif()
+
+add_subdirectory(ArgsParser)
