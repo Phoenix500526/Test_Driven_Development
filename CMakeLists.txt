@@ -10,6 +10,7 @@ FetchContent_Declare(
   GIT_TAG release-1.12.1
 )
 FetchContent_MakeAvailable(googletest)
+set(CMAKE_CTEST_ARGUMENTS "--verbose")
 
 enable_testing()
 
