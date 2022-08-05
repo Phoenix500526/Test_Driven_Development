@@ -14,7 +14,19 @@ public:
     ~ArgsParser(){}
 
     constexpr size_t get_idx(const char c){
-        return std::string_view::npos;
+        if(pattern_[0] == c)
+            return 0;
+
+        size_t pos = pattern_.find(','), idx = 1;
+
+        while( pos != std::string_view::npos){
+            if(pattern_[pos + 1] == c){
+                return idx;
+            }
+            ++idx;
+            pos = pattern_.find(',', pos + 1);
+        }
+        return -1;
     }
 };
 
