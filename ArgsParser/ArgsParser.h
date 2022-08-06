@@ -18,15 +18,23 @@ private:
     std::string_view args_;
     std::unordered_map<char, std::any> table_;
     
+    void pattern_check(){
+        bool charset[26] = {false};
+        for(const char c : pattern_){
+            if(!std::islower(c) || charset[c - 'a'])
+                throw std::invalid_argument("Invalid Pattern");
+            charset[c - 'a'] = true;
+        }
+    }
+
+    void arguments_check(){
+
+    }
 public:
     ArgsParser(const char* pattern, const char* args)
         : pattern_(pattern), args_(args){
-            bool charset[26] = {false};
-            for(const char c : pattern_){
-                if(!std::islower(c) || charset[c - 'a'])
-                    throw std::invalid_argument("Invalid Pattern");
-                charset[c - 'a'] = true;
-            }
+            pattern_check();
+            arguments_check();
         }
     ~ArgsParser(){}
 

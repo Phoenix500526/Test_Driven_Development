@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <stdexcept>
-#include <iostream>
+#include <functional>
 #include "ArgsParser.h"
 #include "TypeList.h"
 // 添加接口设计方式
@@ -17,27 +17,31 @@ TEST(ArgsTest, TypeListTest){
 
 TEST(ArgsTest, ArgsParserConstructor) {
      // Example: -l -p 8080 -d /var/log
-     // Happy Path
-     auto construtor_wrapper = [](const char* pattern){
-          ArgsParser<bool,int,string_view>(pattern, "-l -p 8080 -d /var/log");
+     auto construtor_wrapper = [](const char* pattern, const char* args){
+          ArgsParser<bool,int,string_view>(pattern, args);
      };
-     ASSERT_NO_THROW(construtor_wrapper("lpd"));
+
+     // Happy Path
+     auto pattern_checker = bind(construtor_wrapper, placeholders::_1, "-l -p 8080 -d /var/log");
+     ASSERT_NO_THROW(pattern_checker("lpd"));
      
      // Sad Path
      // TODO: 
      // 1. lpD
      // 2. lp1d
      // 3. lpld
-     ASSERT_THROW(construtor_wrapper("lpD"), invalid_argument);
-     ASSERT_THROW(construtor_wrapper("lp1d"), invalid_argument);
-     ASSERT_THROW(construtor_wrapper("lpld"), invalid_argument);
+     ASSERT_THROW(pattern_checker("lpD"), invalid_argument);
+     ASSERT_THROW(pattern_checker("lp1d"), invalid_argument);
+     ASSERT_THROW(pattern_checker("lpld"), invalid_argument);
 
      // Sad Path
      // TODO:
-     // 1. "-l 123 -p 8080 -d /var/log"
+     // 1. "-l 123"
      // 2. "-l -p -d /var/log"
      // 3. "-l -p 8080 8081 -d /var/log"
-     // ASSERT_THROW(ArgsParser("l:b,p:i,d:s", "-l 123 -p 8080 -d /varlog"), invalid_argument);
+     auto arguments_checker = bind(construtor_wrapper, "lpd", placeholders::_1);
+     ASSERT_THROW(arguments_checker("-l 123"), invalid_argument);
+     
      // ASSERT_THROW(ArgsParser("l:b,p:i,d:s", "-l -p 8080 8081 -d /varlog"), invalid_argument);
      // ASSERT_THROW(ArgsParser("l:b,p:i,d:s", "-l -p -d /varlog"), invalid_argument);
 }
