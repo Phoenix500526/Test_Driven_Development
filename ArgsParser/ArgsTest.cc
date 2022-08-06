@@ -9,28 +9,28 @@ using namespace std;
 TEST(ArgsTest, TypeListTest){
      using typelist_t = TypeList<int, double, char, string_view>;
      ASSERT_EQ(Length_v<typelist_t>, 4);
-     static_assert(std::is_same_v<TypeAt_t<typelist_t, 0>, int>, "typelist_t[0] is not int type");
-     static_assert(std::is_same_v<TypeAt_t<typelist_t, 1>, double>, "typelist_t[1] is not double type");
-     static_assert(std::is_same_v<TypeAt_t<typelist_t, 2>, char>, "typelist_t[2] is not char type");
-     static_assert(std::is_same_v<TypeAt_t<typelist_t, 3>, string_view>, "typelist_t[3] is not string_views type");
+     static_assert(is_same_v<TypeAt_t<typelist_t, 0>, int>, "typelist_t[0] is not int type");
+     static_assert(is_same_v<TypeAt_t<typelist_t, 1>, double>, "typelist_t[1] is not double type");
+     static_assert(is_same_v<TypeAt_t<typelist_t, 2>, char>, "typelist_t[2] is not char type");
+     static_assert(is_same_v<TypeAt_t<typelist_t, 3>, string_view>, "typelist_t[3] is not string_views type");
 }
 
-TEST(ArgsTest, GetIndexFromPattern) {
-     GTEST_SKIP() << "Skipping single test";
+TEST(ArgsTest, ArgsParserConstructor) {
      // Example: -l -p 8080 -d /var/log
      // Happy Path
-     ArgsParser<bool,int,const char *> args{"llpd", "-l -p 8080 -d /var/log"};
-     // EXPECT_EQ(args.get_idx('l'), 0);
-     // EXPECT_EQ(args.get_idx('p'), 1);
-     // EXPECT_EQ(args.get_idx('d'), 2);
-     // EXPECT_EQ(args.get_idx('f'), -1);
+     auto construtor_wrapper = [](const char* pattern){
+          ArgsParser<bool,int,string_view>(pattern, "-l -p 8080 -d /var/log");
+     };
+     ASSERT_NO_THROW(construtor_wrapper("lpd"));
+     
      // Sad Path
      // TODO: 
-     // 1. l:bp:i,d:s
-     // 2. :lb,p:i,d:s
-     // 3. lb:,p:i,
-     // ASSERT_THROW(ArgsParser<bool,int,const char *>("lpD", "-l -p 8080 -d /varlog"), invalid_argument);
-     // ASSERT_THROW(ArgsParser<bool,int,const char *>("lp1d", "-l -p 8080 -d /varlog"), invalid_argument) << __LINE__ << '\n';
+     // 1. lpD
+     // 2. lp1d
+     // 3. lpld
+     ASSERT_THROW(construtor_wrapper("lpD"), invalid_argument);
+     ASSERT_THROW(construtor_wrapper("lp1d"), invalid_argument);
+     ASSERT_THROW(construtor_wrapper("lpld"), invalid_argument);
 
      // Sad Path
      // TODO:

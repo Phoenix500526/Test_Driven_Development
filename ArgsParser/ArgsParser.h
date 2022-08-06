@@ -9,9 +9,6 @@
 #include "TypeList.h"
 
 
-
-
-
 template <typename... Args>
 class ArgsParser
 {
@@ -26,28 +23,13 @@ public:
         : pattern_(pattern), args_(args){
             bool charset[26] = {false};
             for(const char c : pattern_){
-                if(!std::islower(c) && charset[c - 'a'])
+                if(!std::islower(c) || charset[c - 'a'])
                     throw std::invalid_argument("Invalid Pattern");
                 charset[c - 'a'] = true;
             }
         }
     ~ArgsParser(){}
 
-    constexpr size_t get_idx(const char c){
-        if(pattern_[0] == c)
-            return 0;
-
-        size_t pos = pattern_.find(','), idx = 1;
-
-        while( pos != std::string_view::npos){
-            if(pattern_[pos + 1] == c){
-                return idx;
-            }
-            ++idx;
-            pos = pattern_.find(',', pos + 1);
-        }
-        return -1;
-    }
 };
 
 
