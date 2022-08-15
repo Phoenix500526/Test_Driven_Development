@@ -22,8 +22,10 @@ TEST(ArgsTest, should_throw_InvalidPatternError_when_pass_a_invalid_pattern){
      };
      ASSERT_THROW(invalid_pattern_constructor("l:bp:n,d:s"), InvalidPattern);
      // TODO: lb:,p:n,d:s
+     ASSERT_THROW(invalid_pattern_constructor("lb:,p:n,d:s"), InvalidPattern);
      // TODO: 1:b,p:n,d:s, l!b,p:n,d:s
-
+     ASSERT_THROW(invalid_pattern_constructor("1:b,p:n,d:s"), InvalidPattern);
+     ASSERT_THROW(invalid_pattern_constructor("l!b,p:n,d:s"), InvalidPattern);
      // Sad Path: Invalid Args
      // TODO:  "-l 123"
      // TODO: "-l -p -d /var/log"

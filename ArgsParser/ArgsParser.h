@@ -1,9 +1,8 @@
 #ifndef TDD_ARGPARSER_H
 #define TDD_ARGPARSER_H
 #include <string_view>
+#include <cctype>
 #include "ArgsExceptions.h"
-
-#include <iostream>
 
 class ArgsParser
 {
@@ -12,15 +11,23 @@ private:
     std::string_view args_;
     
     void pattern_check(){
-        size_t idx = 3;
-        while(idx < pattern_.length()){
-            if (pattern_[idx] != ',')
-            {
-                throw InvalidPattern("Invalid Pattern");
+        size_t mask = 0b11;
+        for(int idx = 0; idx < pattern_.length(); ++idx){
+            if((idx & mask) == 1){
+                if (pattern_[idx] != ':')
+                {
+                    throw InvalidPattern("Invalid Pattern: Colons error(s)");
+                }
+            }else if((idx & mask) == 3){
+                if (pattern_[idx] != ',')
+                {
+                    throw InvalidPattern("Invalid Pattern: Comma error(s)");
+                }
+            }else{
+                if(!std::islower(pattern_[idx]))
+                    throw InvalidPattern("Invalid Pattern: Unsupported symbol");
             }
-            idx += 4;
         }
-        std::cout << std::endl;
     }
     
 public:
