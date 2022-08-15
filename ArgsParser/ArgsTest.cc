@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
+#include <functional>
 #include "ArgsParser.h"
+#include "ArgsExceptions.h"
 // 添加接口设计方式
 using namespace std;
 
@@ -13,9 +15,12 @@ TEST(ArgsTest, should_construct_ArgsParser_Object){
 }
 
 TEST(ArgsTest, should_throw_InvalidPatternError_when_pass_a_invalid_pattern){
-     GTEST_SKIP();
      // Sad Path: Invalid Pattern
      // TODO: l:bp:n,d:s
+     auto invalid_pattern_constructor = [](const char* pattern){
+          ArgsParser(pattern, "-l -p 8080 -d /var/log");
+     };
+     ASSERT_THROW(invalid_pattern_constructor("l:bp:n,d:s"), InvalidPattern);
      // TODO: lb:,p:n,d:s
      // TODO: 1:b,p:n,d:s, l!b,p:n,d:s
 
