@@ -26,8 +26,15 @@ TEST(ArgsTest, should_throw_InvalidPatternError_when_pass_a_invalid_pattern){
      // TODO: 1:b,p:n,d:s, l!b,p:n,d:s
      ASSERT_THROW(invalid_pattern_constructor("1:b,p:n,d:s"), InvalidPattern);
      ASSERT_THROW(invalid_pattern_constructor("l!b,p:n,d:s"), InvalidPattern);
+     // TODO: l:x,p:n,d:s
+     ASSERT_THROW(invalid_pattern_constructor("l:x,p:n,d:s"), InvalidPattern);
+     
      // Sad Path: Invalid Args
+     auto invalid_argument_constructor = [](const char* arguments){
+          ArgsParser("l:b,p:n,d:s", arguments);
+     };
      // TODO:  "-l 123"
+     ASSERT_THROW(invalid_argument_constructor("-l 123"), InvalidArgument);
      // TODO: "-l -p -d /var/log"
      // TODO: "-l -p 8080 8081 -d /var/log"
 }

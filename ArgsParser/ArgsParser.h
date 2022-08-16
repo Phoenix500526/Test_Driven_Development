@@ -39,11 +39,16 @@ private:
             predicator[idx & mask](idx);     
         }
     }
+
+    void arguments_check(){
+
+    }
     
 public:
     ArgsParser(const char* pattern, const char* args)
         : pattern_(pattern), args_(args){
             pattern_check();
+            arguments_check();
         }
     ~ArgsParser(){}
 
