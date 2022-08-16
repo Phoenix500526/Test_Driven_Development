@@ -43,3 +43,10 @@ TEST(ArgsTest, should_throw_Error_when_pass_a_invalid_pattern){
      ASSERT_THROW(invalid_argument_constructor("-l -x 8080 -d /var/log"), InvalidArgument);
 }
 
+TEST(ArgsTest, should_get_a_relevant_value_by_the_give_option){
+     // TODO: getBool('l')
+     ArgsParser parser{"l:b,p:n,d:s", "-l -p 8090 -d /var/log"};
+     ASSERT_TRUE(parser.getBoolean('l'));
+     // TODO: getNumber('p')
+     ASSERT_EQ(parser.getNumber('p'), 8090);
+}

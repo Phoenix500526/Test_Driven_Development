@@ -3,14 +3,16 @@
 #include <string_view>
 #include <cctype>
 #include <functional>
+#include <unordered_map>
+#include <charconv>
 #include "ArgsExceptions.h"
-
+#include <iostream>
 class ArgsParser
 {
 private:
     std::string_view pattern_;
     std::string_view args_;
-    
+    std::unordered_map<char, std::any> table_;
     
     void pattern_check(){
         constexpr bool supported_pattern[26] = {
@@ -34,6 +36,7 @@ private:
             if(this->pattern_[idx] != ',')
                 throw InvalidPattern("Invalid Pattern: Commas Error");
         };
+
         size_t mask = 0b11;
         for(int idx = 0; idx < pattern_.length(); ++idx){
             predicator[idx & mask](idx);     
@@ -41,28 +44,52 @@ private:
     }
 
     void arguments_check(){
-        static const int whitespaces[26] = {
+        const int whitespaces[26] = {
             0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
             2, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0
         };
         size_t idx = 0;
-        auto get_args_whitespaces = [this](const char ch)->int{
-            size_t idx = this->pattern_.find(ch);
+
+        auto check_whitespace = [this, &whitespaces](const size_t start, const size_t end){
+            size_t idx = this->pattern_.find(this->args_[start]);
             if(idx == std::string_view::npos)
                 throw InvalidArgument("Invalid Argument: Undefined  Argument");
-            return whitespaces[this->pattern_[idx + 2] - 'a'];
-        };
-
-        auto check_whitespace = [this, &get_args_whitespaces](const size_t start, const size_t end){
+            size_t type_idx = idx + 2;
             size_t length = end != std::string_view::npos ? end - start : end;
             size_t whitespace_cnt = end != std::string_view::npos ? 
-                                           get_args_whitespaces(this->args_[start]) : 
-                                           get_args_whitespaces(this->args_[start]) - 1;
+                                    whitespaces[this->pattern_[type_idx] - 'a'] :
+                                    whitespaces[this->pattern_[type_idx] - 'a'] - 1;
         
             std::string_view sub_str = this->args_.substr(start, length);
+
             auto cnt = std::count(sub_str.begin(), sub_str.end(), ' ');
             if(cnt != whitespace_cnt)
                     throw InvalidArgument("Invalid Argument: Wrong Number of Parameters");
+            switch (this->pattern_[type_idx])
+            {
+            case 'b':
+                this->table_[this->args_[start]] = std::make_any<bool>(true);
+                break;
+            case 'n':{
+                auto value_str = sub_str.substr(2);
+                auto last_whitespace = value_str.find_last_of(' ');
+                if (last_whitespace != std::string_view::npos) {
+                    value_str.remove_suffix(value_str.size() - last_whitespace);
+                }
+                int32_t value;
+                if(std::from_chars(value_str.begin(), value_str.end(), value).ec != std::errc{}){
+                    throw InvalidArgument("Invalid Argument: Unmatch type and argument");
+                }
+                this->table_[this->args_[start]] = std::make_any<int32_t>(value);
+                break;
+            }
+            // case 's':
+            //     break;
+            default:
+                break;
+            }
+            
+
         };
 
         while(idx != std::string_view::npos){
@@ -79,7 +106,17 @@ public:
             arguments_check();
         }
     ~ArgsParser(){}
+    
+    bool getBoolean(const char option){
+        return table_.find(option) != table_.end() ? true : false;
+    }
 
+    int32_t getNumber(const char option){
+        if(table_.find(option) != table_.end()){
+            return std::any_cast<int32_t>(table_[option]);
+        }
+        return 8080;
+    }
 };
 
 
