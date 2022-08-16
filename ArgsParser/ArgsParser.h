@@ -52,25 +52,24 @@ private:
                 throw InvalidArgument("Invalid Argument: Undefined  Argument");
             return whitespaces[this->pattern_[idx + 2] - 'a'];
         };
-        while(idx < args_.length()){
-            size_t next_hyphen = args_.find('-', idx + 1);
-            size_t whitespace_cnt = get_args_whitespaces(args_[idx + 1]);
-            if (next_hyphen == std::string_view::npos){
-                std::string_view sub_str = args_.substr(idx + 1);
-                auto cnt = std::count(sub_str.begin(), sub_str.end(), ' ');
-                if(cnt != whitespace_cnt - 1)
-                    throw InvalidArgument("Invalid Argument: Wrong Number of Parameters");
-                idx = args_.length();
-            }else{
-                std::string_view sub_str = args_.substr(idx + 1, next_hyphen - idx - 1);
-                auto cnt = std::count(sub_str.begin(), sub_str.end(), ' ');
-                if(cnt != whitespace_cnt)
-                    throw InvalidArgument("Invalid Argument: Wrong Number of Parameters");
-                idx = next_hyphen;
-            }
-            
-        }
+
+        auto check_whitespace = [this, &get_args_whitespaces](const size_t start, const size_t end){
+            size_t length = end != std::string_view::npos ? end - start : end;
+            size_t whitespace_cnt = end != std::string_view::npos ? 
+                                           get_args_whitespaces(this->args_[start]) : 
+                                           get_args_whitespaces(this->args_[start]) - 1;
         
+            std::string_view sub_str = this->args_.substr(start, length);
+            auto cnt = std::count(sub_str.begin(), sub_str.end(), ' ');
+            if(cnt != whitespace_cnt)
+                    throw InvalidArgument("Invalid Argument: Wrong Number of Parameters");
+        };
+
+        while(idx != std::string_view::npos){
+            size_t next_hyphen = args_.find('-', idx + 1);
+            check_whitespace(idx + 1, next_hyphen);
+            idx = next_hyphen;
+        }
     }
     
 public:
