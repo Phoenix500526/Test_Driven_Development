@@ -14,7 +14,7 @@ TEST(ArgsTest, should_construct_ArgsParser_Object){
      ASSERT_NO_THROW(ArgsParser("l:b,p:n,d:s", "-l -p 8080 -d /var/log"));
 }
 
-TEST(ArgsTest, should_throw_InvalidPatternError_when_pass_a_invalid_pattern){
+TEST(ArgsTest, should_throw_Error_when_pass_a_invalid_pattern){
      // Sad Path: Invalid Pattern
      // TODO: l:bp:n,d:s
      auto invalid_pattern_constructor = [](const char* pattern){
@@ -36,6 +36,10 @@ TEST(ArgsTest, should_throw_InvalidPatternError_when_pass_a_invalid_pattern){
      // TODO:  "-l 123"
      ASSERT_THROW(invalid_argument_constructor("-l 123"), InvalidArgument);
      // TODO: "-l -p -d /var/log"
+     ASSERT_THROW(invalid_argument_constructor("-l -p -d /var/log"), InvalidArgument);
      // TODO: "-l -p 8080 8081 -d /var/log"
+     ASSERT_THROW(invalid_argument_constructor("-l -p 8080 8081 -d /var/log"), InvalidArgument);
+     // TODO: "-l -p 8080 8081 -d /var/log"
+     ASSERT_THROW(invalid_argument_constructor("-l -x 8080 -d /var/log"), InvalidArgument);
 }
 
