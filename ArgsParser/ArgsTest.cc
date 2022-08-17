@@ -56,4 +56,18 @@ TEST(ArgsTest, should_get_a_relevant_value_by_the_give_option) {
     ASSERT_EQ(parser.getNumber('p'), 8090);
     // TODO: getString('d')
     ASSERT_EQ(parser.getString('d'), string_view{"/var/log"});
+
+    // TODO: get_default value of -l and -d —— "-p 8081"
+    ArgsParser parser_1{"l:b,p:n,d:s", "-p 8081"};
+    ASSERT_FALSE(parser_1.getBoolean('l'));
+    ASSERT_EQ(parser_1.getString('d'), string_view{""});
+    ASSERT_EQ(parser_1.getNumber('p'), 8081);
+
+    // TODO: get_default value of -p and -d —— "-l"
+    ArgsParser parser_2{"l:b,p:n,d:s", "-l"};
+    ASSERT_TRUE(parser_2.getBoolean('l'));
+    ASSERT_EQ(parser_2.getString('d'), string_view{""});
+    ASSERT_EQ(parser_2.getNumber('p'), 8000);
+
+
 }
