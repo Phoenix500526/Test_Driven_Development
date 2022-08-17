@@ -83,8 +83,8 @@ private:
                 this->table_[this->args_[start]] = std::make_any<int32_t>(value);
                 break;
             }
-            // case 's':
-            //     break;
+            case 's':
+                break;
             default:
                 break;
             }
@@ -116,6 +116,13 @@ public:
             return std::any_cast<int32_t>(table_[option]);
         }
         return 8080;
+    }
+
+    std::string_view getString(const char option){
+        using namespace std::literals;
+        if(table_.find(option) != table_.end())
+            return std::any_cast<std::string_view>(table_[option]);
+        return ""sv;
     }
 };
 

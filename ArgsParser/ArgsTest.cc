@@ -49,4 +49,6 @@ TEST(ArgsTest, should_get_a_relevant_value_by_the_give_option){
      ASSERT_TRUE(parser.getBoolean('l'));
      // TODO: getNumber('p')
      ASSERT_EQ(parser.getNumber('p'), 8090);
+     // TODO: getString('d')
+     ASSERT_EQ(parser.getString('d'), string_view{"/var/log"});
 }
