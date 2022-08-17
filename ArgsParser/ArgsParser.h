@@ -83,8 +83,15 @@ private:
                 this->table_[this->args_[start]] = std::make_any<int32_t>(value);
                 break;
             }
-            case 's':
+            case 's':{
+                auto value_str = sub_str.substr(2);
+                auto last_whitespace = value_str.find_last_of(' ');
+                if (last_whitespace != std::string_view::npos) {
+                    value_str.remove_suffix(value_str.size() - last_whitespace);
+                }
+                this->table_[this->args_[start]] = std::make_any<std::string_view>(value_str);
                 break;
+            }
             default:
                 break;
             }
