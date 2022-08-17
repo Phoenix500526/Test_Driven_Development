@@ -114,7 +114,7 @@ private:
 
     void arguments_check() {
         size_t idx = 0;
-        while (idx != std::string_view::npos) {
+        while (!args_.empty() && idx != std::string_view::npos) {
             size_t next_hyphen = args_.find('-', idx + 1);
             check_whitespace(idx + 1, next_hyphen);
             idx = next_hyphen;
