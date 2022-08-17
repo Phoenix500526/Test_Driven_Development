@@ -78,6 +78,10 @@ private:
     }
 
     inline std::string_view get_option_and_parameter(std::string_view str) {
+        if (str.length() < 3) {
+            return "";
+        }
+
         auto parameter = str.substr(2);
         auto last_whitespace = parameter.find_last_of(' ');
         if (last_whitespace != std::string_view::npos) {

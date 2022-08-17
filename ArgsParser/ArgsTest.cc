@@ -68,6 +68,4 @@ TEST(ArgsTest, should_get_a_relevant_value_by_the_give_option) {
     ASSERT_TRUE(parser_2.getBoolean('l'));
     ASSERT_EQ(parser_2.getString('d'), string_view{""});
     ASSERT_EQ(parser_2.getNumber('p'), 8000);
-
-
 }
