@@ -121,6 +121,14 @@ private:
         }
     }
 
+    template<typename T>
+    T getValue(const char option, T default_value){
+        if (table_.find(option) != table_.end()) {
+            return std::any_cast<T>(table_[option]);
+        }
+        return default_value;
+    }
+
 public:
     ArgsParser(const char* pattern, const char* args)
         : pattern_(pattern), args_(args) {
@@ -131,21 +139,17 @@ public:
     ~ArgsParser() {}
 
     bool getBoolean(const char option) {
-        return table_.find(option) != table_.end() ? true : false;
+        return getValue(option, false);
     }
 
     int32_t getNumber(const char option) {
-        if (table_.find(option) != table_.end()) {
-            return std::any_cast<int32_t>(table_[option]);
-        }
-        return 8000;
+        return getValue(option, 8000);
+        
     }
 
     std::string_view getString(const char option) {
         using namespace std::literals;
-        if (table_.find(option) != table_.end())
-            return std::any_cast<std::string_view>(table_[option]);
-        return ""sv;
+        return getValue(option, ""sv);
     }
 };
 
